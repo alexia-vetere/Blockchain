@@ -9,7 +9,7 @@ import (
 )
 
 // Ruta de templates:
-const tempDir = "wallet_server/templates"
+const tempDir = "templates"
 
 // Clase para el servidor de la wallet:
 type WalletServer struct {
@@ -36,8 +36,12 @@ func (ws *WalletServer) Gateway() string {
 func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		t, _ := template.ParseFiles(path.Join(tempDir, "index.html"))
-		t.Execute(w, "")
+		t, err := template.ParseFiles(path.Join(tempDir, "index.html"))
+		if err != nil {
+			log.Println("ERROR: Invalid Index Directory:", path.Join(tempDir, "index.html"))
+		} else {
+			t.Execute(w, "")
+		}
 	default:
 		log.Printf("ERROR: Invalid HTTP Method")
 	}
@@ -46,5 +50,5 @@ func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 // Método para correr el servidor:
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
-	log.Fatal(http.ListenAndServe("localhost"+strconv.Itoa(int(ws.Port())), nil))
+	log.Fatal(http.ListenAndServe("localhost:"+strconv.Itoa(int(ws.Port())), nil))
 }
