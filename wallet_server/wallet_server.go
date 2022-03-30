@@ -1,6 +1,8 @@
 package main
 
 import (
+	"blockchain_proyect/blockchain/wallet"
+	"io"
 	"log"
 	"net/http"
 	"path"
@@ -47,8 +49,27 @@ func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Método que retorna la información del index:
+func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case http.MethodPost:
+		w.Header().Add("Content-Type", "application/json")
+		myWallet := wallet.NewWallet()
+		m, err := myWallet.MarshalJSON()
+		if err != nil {
+			log.Println(err)
+		}
+		io.WriteString(w, string(m[:]))
+
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP Method")
+	}
+}
+
 // Método para correr el servidor:
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
+	http.HandleFunc("/wallet", ws.Wallet)
 	log.Fatal(http.ListenAndServe("localhost:"+strconv.Itoa(int(ws.Port())), nil))
 }

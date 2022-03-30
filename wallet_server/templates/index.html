@@ -2,10 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wallet</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $.ajax({
+                url: '/wallet',
+                type: 'POST',
+                success: function (response) {
+                    $('#public_key').val(response['public_key']);
+                    $('#private_key').val(response['private_key']);
+                    $('#blockchain_address').val(response['blockchain_address']);
+                    console.info(response);
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            })
+            $('#send_money_button').click(function(){
+                let confirm_text = 'Are you sure to send?';
+                let confirm_result = confirm(confirm_text)
+                if (confirm_result !== true) {
+                    alert('Canceled')
+                    return
+                }
+
+                let transaction_data = {
+                    'sender_private_key': $('#private_key').val(),
+                    'sender_blockchain_address': $('#blockchain_address').val(),
+                    'recipient_blockchain_address': $('#recipient_blockchain_address').val(),
+                    'sender_public_key': $('#sender_public_key').val(),
+                    'value': $('#send_amount').val(),
+                }
+
+                $.ajax({
+                    url: '/transaction',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(transaction_data),
+                    success: function (response) {
+                        console.info(response);
+                        alert('Send success');
+                    },
+                    error: function (response) {
+                        console.error(response)
+                        alert('Send failed');
+                    }
+                })
+
+            })
+        })
+    </script>
 </head>
 <body>
     <div>
@@ -15,6 +62,9 @@
 
         <p>Public Key</p>
         <textarea id="public_key" cols="100" rows="2"></textarea>
+
+        <p>Private Key</p>
+        <textarea id="private_key" cols="100" rows="1"></textarea>
 
         <p>Blockchain Address</p>
         <textarea id="blockchain_address" cols="100" rows="1"></textarea>
