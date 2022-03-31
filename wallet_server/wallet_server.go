@@ -1,7 +1,9 @@
 package main
 
 import (
+	"blockchain_proyect/blockchain/utils"
 	"blockchain_proyect/blockchain/wallet"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -67,9 +69,34 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Método para retornar datos al enviar dinero:
+func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case http.MethodPost:
+		decoder := json.NewDecoder(req.Body)
+		var t wallet.TransactionRequest
+		err := decoder.Decode(&t)
+		if err != nil {
+			log.Panicf("ERROR: %v", err)
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+		if !t.Validate() {
+			log.Panicln("ERROR: missing field(s)")
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP Method")
+	}
+}
+
 // Método para correr el servidor:
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Fatal(http.ListenAndServe("localhost:"+strconv.Itoa(int(ws.Port())), nil))
 }
