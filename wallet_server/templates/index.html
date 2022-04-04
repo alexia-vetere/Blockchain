@@ -54,6 +54,28 @@
                 })
                 alert('Send success');
             })
+
+            function reload_amount() {
+                let data = {'blockchain_address': $('#blockchain_address').val()}
+                $.ajax({
+                    url: '/wallet/amount',
+                    type: 'GET',
+                    data: data,
+                    success: function(response){
+                        let amount = response['amount'];
+                        $('#wallet_amount').text(amount);
+                        console.info(amount)
+                    },
+                    error: function(err){
+                        console.error(err)
+                    }
+                })
+            }
+
+            $('#reload_wallet').click(function(){
+                reload_amount();
+                
+            })
         })
     </script>
 </head>
