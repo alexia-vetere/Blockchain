@@ -43,11 +43,10 @@
                     success: function (response) {
                         console.info(response);
                         if($.parseJSON(response).message === "fail") {
-                            alert('Send failed')
+                            alert('failed')
                             return
-                        }else {
-                            alert('Send success') 
-                        }
+                        };
+                        alert('Send success');
                     },
                     error: function (err) {
                         console.error(err)
