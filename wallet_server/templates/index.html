@@ -45,15 +45,14 @@
                         if($.parseJSON(response).message === "fail") {
                             alert('failed')
                             return
-                        };
-                        alert('Send success');
+                        }
                     },
                     error: function (err) {
                         console.error(err)
                         alert('Send failed');
                     }
                 })
-
+                alert('Send success');
             })
         })
     </script>
