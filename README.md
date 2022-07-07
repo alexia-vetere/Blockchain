@@ -7,7 +7,7 @@
 
 
 ㅤ➢ Creation of the Block, Blockchain, PoW and Mining </br>
-ㅤ➢ Development of Wallet/br>
+ㅤ➢ Development of Wallet </br>
 ㅤ➢ Development of the Blockchain Server API</br>
 ㅤ➢ Creation the structure of the Blockchain Network </br>
 ㅤ➢ Synchronizing transactions </br>
